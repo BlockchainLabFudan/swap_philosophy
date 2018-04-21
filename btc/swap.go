@@ -13,6 +13,7 @@ import (
 	"github.com/btcsuite/btcd/txscript"
 	"errors"
 	"github.com/btcsuite/btcd/wire"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 )
 type InitiateCmd struct {
 	cp2Addr *btcutil.AddressPubKeyHash
@@ -25,11 +26,11 @@ func NewInitiateCmd(c *btcutil.AddressPubKeyHash, a btcutil.Amount) (*InitiateCm
 	return x
 }
 
-func (cmd InitiateCmd) Initiate(c *rpc.Client) (error){
+func (cmd InitiateCmd) Initiate(c *rpc.Client) (btcutil.Address,[]byte, *wire.MsgTx, *chainhash.Hash){
 	var secret [secretSize]byte
 	_, err := rand.Read(secret[:])
 	if err != nil {
-		return err
+		return nil,nil,nil,nil
 	}
 	secretHash := crypto.CalcHash(secret[:], sha256.New())
 
@@ -44,7 +45,7 @@ func (cmd InitiateCmd) Initiate(c *rpc.Client) (error){
 		secretHash: secretHash,
 	})
 	if err != nil {
-		return err
+		return nil,nil,nil,nil
 	}
 
 	refundTxHash := b.refundTx.TxHash()
@@ -69,7 +70,7 @@ func (cmd InitiateCmd) Initiate(c *rpc.Client) (error){
 	fmt.Printf("%x\n\n", refundBuf.Bytes())
 
 	//return promptPublishTx(c, b.contractTx, "contract")
-	return nil
+	return b.contractP2SH, b.contract, b.contractTx, b.contractTxHash
 }
 
 

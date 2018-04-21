@@ -6,6 +6,7 @@ import (
 	"github.com/scottocs/swap_philosophy/btc"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 )
 
 func (this *ExampleCase)InitTmpSKForBob()  {
@@ -47,9 +48,9 @@ func (this *ExampleCase)RefundDeposit()  {
 func (this *ExampleCase)ExchangePubkeys()  {
 	//in example, we ignore the exchange process, just share the PKs.,
 }
-func (this *ExampleCase)BobInitiate(amount btcutil.Amount)  {
+func (this *ExampleCase)BobInitiate(amount btcutil.Amount) (btcutil.Address,[]byte, *wire.MsgTx, *chainhash.Hash) {
 	cmd := btc.NewInitiateCmd(this.AliceTmpK.Addr,amount)
-	cmd.Initiate(nil)
+	return cmd.Initiate(nil)
 }
 func (this *ExampleCase)AliceAuditTX(BobContract []byte, BobContractTx *wire.MsgTx)  {
 	cmd := btc.NewAuditContractCmd(BobContract, BobContractTx)

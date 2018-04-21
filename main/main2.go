@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/scottocs/swap_philosophy/runCase"
 	"github.com/btcsuite/btcutil"
+	"fmt"
 )
 
 func main() {
@@ -12,9 +13,13 @@ func main() {
 
 	GOD.ExchangePubkeys()
 
+	fmt.Printf("#####################BobInitiate()#########################\n\n")
 	BtcAmount,_ := btcutil.NewAmount(100)
-	GOD.BobInitiate(BtcAmount)
-	//GOD.AliceAuditTX()
+	_, Bobcontract, BobcontractTx, _ := GOD.BobInitiate(BtcAmount)
+
+	fmt.Printf("#####################AliceAuditTX()#############################\n\n")
+	GOD.AliceAuditTX(Bobcontract, BobcontractTx)
+
 
 	//GOD.SendBTCToAlice()
 	//GOD.SendCYBToBob()

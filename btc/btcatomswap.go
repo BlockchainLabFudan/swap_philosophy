@@ -28,6 +28,7 @@ import (
 	"github.com/btcsuite/btcutil"
 	"github.com/btcsuite/btcwallet/wallet/txrules"
 	"golang.org/x/crypto/ripemd160"
+	"github.com/btcsuite/btcd/btcjson"
 )
 
 const verify = true
@@ -630,19 +631,39 @@ func buildContract(c *rpc.Client, args *contractArgs) (*builtContract, error) {
 	}
 
 	//feePerKb, minFeePerKb, err := getFeePerKb(c)
-	feePerKb, _ := btcutil.NewAmount(0.5)
-	minFeePerKb, _ := btcutil.NewAmount(0.1)
+	//feePerKb, _ := btcutil.NewAmount(0.5)
+	//minFeePerKb, _ := btcutil.NewAmount(0.1)
 	if err != nil {
 		return nil, err
 	}
 
 	unsignedContract := wire.NewMsgTx(txVersion)
 	unsignedContract.AddTxOut(wire.NewTxOut(int64(args.amount), contractP2SHPkScript))
-	unsignedContract, contractFee, err := fundRawTransaction(c, unsignedContract, feePerKb)
+	//unsignedContract, contractFee, err := fundRawTransaction(c, unsignedContract, feePerKb)
+	contractFee,_ := btcutil.NewAmount(99)
 	if err != nil {
 		return nil, fmt.Errorf("fundrawtransaction: %v", err)
 	}
-	contractTx, complete, err := c.SignRawTransaction(unsignedContract)
+	//contractTx, complete, err := c.SignRawTransaction(unsignedContract)
+
+	tx := unsignedContract
+	txHex := ""
+	if tx != nil {
+		// Serialize the transaction and convert to hex string.
+		buf := bytes.NewBuffer(make([]byte, 0, tx.SerializeSize()))
+		if err := tx.Serialize(buf); err != nil {
+			//return err
+		}
+		txHex = hex.EncodeToString(buf.Bytes())
+	}
+
+	cmd := btcjson.NewSignRawTransactionCmd(txHex, nil, nil, nil)
+	fmt.Printf("btcjson.NewSignRawTransactionCmd: %v \n", cmd)
+
+	//TODO::here sign a tx
+	contractTx := tx
+	complete := true
+
 	if err != nil {
 		return nil, fmt.Errorf("signrawtransaction: %v", err)
 	}
@@ -652,7 +673,10 @@ func buildContract(c *rpc.Client, args *contractArgs) (*builtContract, error) {
 
 	contractTxHash := contractTx.TxHash()
 
-	refundTx, refundFee, err := buildRefund(c, contract, contractTx, feePerKb, minFeePerKb)
+	//refundTx, refundFee, err := buildRefund(c, contract, contractTx, feePerKb, minFeePerKb)
+	refundTx := tx
+	refundFee,_ := btcutil.NewAmount(0)
+
 	if err != nil {
 		return nil, err
 	}
