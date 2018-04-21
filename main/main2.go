@@ -30,19 +30,23 @@ func main() {
 
 	BobSig,_ := cyb.GetAcctFromName("bob").TmpK.Private.Sign(btcutil.Hash160(Bobcontract))
 	BobSigByte := BobSig.Serialize()
-	//_ := string(BobSigByte) //BobSigString
-	BobSigHash := btcutil.Hash160(BobSigByte)
+	//Bob prepare its sig and h(sig)
+	BobSigString := hex.EncodeToString(BobSigByte) //BobSigString
+	BobSigHash := hex.EncodeToString(btcutil.Hash160([]byte(BobSigString)))
+
 
 	fmt.Printf("#####################AliceAuditTX()#############################\n\n")
 	GOD.AliceAuditTX(Bobcontract, BobcontractTx)
 
-
-	//GOD.SendBTCToAlice()
-	//GOD.SendCYBToBob()
+	fmt.Printf("##################### clock of CYB Chain  is working()#############################\n\n")
 	go cyb.Run()
 
-	time.Sleep(10*time.Second)
-	signature,_ :=  cyb.GetAcctFromName("bob").TmpK.Private.Sign(BobSigHash)
-	cyb.OnReceiveHash("bob", string(signature.Serialize()))
+	fmt.Printf("#####################Get Bob's secret, namely h(SigB)#############################\n\n")
+	bob := cyb.GetAcctFromName("bob")
+	bob.SecretHash = BobSigHash
+	//signature,_ :=  cyb.GetAcctFromName("bob").TmpK.Private.Sign([]byte(BobSigString))
+	fmt.Printf("#####################Bob broadcast its sigB to BTC and CYB #############################\n\n")
+	go cyb.OnReceiveHash("bob", BobSigString)
 
+	time.Sleep(10*time.Second)
 }
