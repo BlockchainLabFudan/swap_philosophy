@@ -1,6 +1,7 @@
 package main
 
 import "github.com/scottocs/swap_philosophy/cyb"
+import "github.com/scottocs/swap_philosophy/crypto"
 
 
 func main() {
@@ -9,4 +10,5 @@ func main() {
 	sendBTCToAlice()
 	sendCYBToBob()
 	go cyb.Run()
+	crypto.TestGenerateSharedSecret()
 }
