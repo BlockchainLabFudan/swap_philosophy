@@ -5,7 +5,9 @@ import (
 	ccrypto "github.com/scottocs/swap_philosophy/crypto"
 	"github.com/scottocs/swap_philosophy/btc"
 	"github.com/btcsuite/btcd/wire"
+	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcutil"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 )
 
 func (this *ExampleCase)InitTmpSKForBob()  {
