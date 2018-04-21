@@ -50,7 +50,7 @@ func (this *ExampleCase)ExchangePubkeys()  {
 	//in example, we ignore the exchange process, just share the PKs.,
 }
 func (this *ExampleCase)BobInitiate(amount btcutil.Amount) (btcutil.Address,[]byte, *wire.MsgTx, *chainhash.Hash) {
-	cmd := btc.NewInitiateCmd(this.AliceTmpK.Addr,amount)
+	cmd := btc.NewInitiateCmd(this.BobTmpK.Private.Serialize(),this.BobTmpK.Addr,this.AliceTmpK.Addr,amount)
 	return cmd.Initiate(nil)
 }
 func (this *ExampleCase)AliceAuditTX(BobContract []byte, BobContractTx *wire.MsgTx)  {

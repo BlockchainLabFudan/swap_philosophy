@@ -2,7 +2,6 @@ package btc
 
 import (
 	"bytes"
-	"crypto/rand"
 	"crypto/sha256"
 	"fmt"
 	"time"
@@ -16,29 +15,34 @@ import (
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 )
 type InitiateCmd struct {
+	addr   *btcutil.AddressPubKeyHash
+	secret []byte
 	cp2Addr *btcutil.AddressPubKeyHash
 	amount  btcutil.Amount
 }
-func NewInitiateCmd(c *btcutil.AddressPubKeyHash, a btcutil.Amount) (*InitiateCmd){
+func NewInitiateCmd(s []byte,addr *btcutil.AddressPubKeyHash,c *btcutil.AddressPubKeyHash, a btcutil.Amount) (*InitiateCmd){
 	x := new(InitiateCmd)
+	x.addr = addr
+	x.secret = s
 	x.cp2Addr = c
 	x.amount = a
 	return x
 }
 
 func (cmd InitiateCmd) Initiate(c *rpc.Client) (btcutil.Address,[]byte, *wire.MsgTx, *chainhash.Hash){
-	var secret [secretSize]byte
-	_, err := rand.Read(secret[:])
-	if err != nil {
-		return nil,nil,nil,nil
-	}
-	secretHash := crypto.CalcHash(secret[:], sha256.New())
+	//var secret [secretSize]byte
+	//_, err := rand.Read(secret[:])
+	//if err != nil {
+	//	return nil,nil,nil,nil
+	//}
+	secretHash := crypto.CalcHash(cmd.secret, sha256.New())
 
 	// locktime after 500,000,000 (Tue Nov  5 00:53:20 1985 UTC) is interpreted
 	// as a unix time rather than a block height.
 	locktime := time.Now().Add(48 * time.Hour).Unix()
 
 	b, err := buildContract(c, &contractArgs{
+		self:       cmd.addr,
 		them:       cmd.cp2Addr,
 		amount:     cmd.amount,
 		locktime:   locktime,
@@ -52,7 +56,7 @@ func (cmd InitiateCmd) Initiate(c *rpc.Client) (btcutil.Address,[]byte, *wire.Ms
 	contractFeePerKb := calcFeePerKb(b.contractFee, b.contractTx.SerializeSize())
 	refundFeePerKb := calcFeePerKb(b.refundFee, b.refundTx.SerializeSize())
 
-	fmt.Printf("Secret:      %x\n", secret)
+	fmt.Printf("Secret:      %x\n", cmd.secret)
 	fmt.Printf("Secret hash: %x\n\n", secretHash)
 	fmt.Printf("Contract fee: %v (%0.8f BTC/kB)\n", b.contractFee, contractFeePerKb)
 	fmt.Printf("Refund fee:   %v (%0.8f BTC/kB)\n\n", b.refundFee, refundFeePerKb)

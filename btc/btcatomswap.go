@@ -581,6 +581,7 @@ func promptPublishTx(c *rpc.Client, tx *wire.MsgTx, name string) error {
 // contractArgs specifies the common parameters used to create the initiator's
 // and participant's contract.
 type contractArgs struct {
+	self       *btcutil.AddressPubKeyHash
 	them       *btcutil.AddressPubKeyHash
 	amount     btcutil.Amount
 	locktime   int64
@@ -603,6 +604,8 @@ type builtContract struct {
 // wallet RPC to generate an internal address to redeem the refund and to sign
 // the payment to the contract transaction.
 func buildContract(c *rpc.Client, args *contractArgs) (*builtContract, error) {
+	//getRawChangeAddress()
+	//return default address.
 	//refundAddr, err := getRawChangeAddress(c)
 	//	//if err != nil {
 	//	//	return nil, fmt.Errorf("getrawchangeaddress: %v", err)
@@ -615,8 +618,8 @@ func buildContract(c *rpc.Client, args *contractArgs) (*builtContract, error) {
 	//	//}
 
 	//contract, err := atomicSwapContract(refundAddrH.Hash160(), args.them.Hash160(),
-	var refundAddrH  = new([20]byte)
-	contract, err := atomicSwapContract(refundAddrH, args.them.Hash160(),
+	//var refundAddrH  = new([20]byte)
+	contract, err := atomicSwapContract(args.self.Hash160(), args.them.Hash160(),
 		args.locktime, args.secretHash)
 	if err != nil {
 		return nil, err
@@ -1123,6 +1126,18 @@ func atomicSwapContract(pkhMe, pkhThem *[ripemd160.Size]byte, locktime int64, se
 		b.AddOp(txscript.OP_DUP)
 		b.AddOp(txscript.OP_HASH160)
 		b.AddData(pkhThem[:])
+
+		// check their sig
+		b.AddOp(txscript.OP_EQUALVERIFY)
+		b.AddOp(txscript.OP_CHECKSIGVERIFY)
+		// their
+		b.AddData(pkhMe[:])
+
+		//check b's sig
+		b.AddOp(txscript.OP_DUP)
+		b.AddOp(txscript.OP_HASH160)
+		b.AddData(pkhThem[:])
+
 	}
 	b.AddOp(txscript.OP_ELSE) // Refund path
 	{
