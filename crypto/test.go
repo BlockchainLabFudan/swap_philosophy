@@ -21,7 +21,6 @@ func NewPrivateKey(curve elliptic.Curve) (*btcec.PrivateKey, error) {
 func TestGenerateSharedSecret() {
 	privKey1, err := NewPrivateKey(btcec.S256())
 	if err != nil {
-
 		return
 	}
 	privKey2, err := NewPrivateKey(btcec.S256())
