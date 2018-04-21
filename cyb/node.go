@@ -3,10 +3,10 @@ package cyb
 import (
 
 	"fmt"
-
+	ccrypto "github.com/scottocs/swap_philosophy/crypto"
 	"encoding/json"
 	"time"
-
+	"github.com/btcsuite/btcutil"
 	"strings"
 )
 
@@ -19,32 +19,36 @@ type Account struct {
 	EndTime     int64 `json:"et"`
 	OK bool `json:"ok"`
 	SecretHash string `json:"sh"`
-	Sigs AcntWithSig `json:"sigs"`
+	SigB string `json:"sigB"`
+	TmpK *ccrypto.Keypair
 }
-type AcntWithSig struct{
-	Mysig string `json:"mine"`
-	Othersig string `json:"other"`
-}
+
 var acct []Account
 func Init() {
 	var data = `{"name":"bob","balance":10}`
 	act := &Account{}
+	act.TmpK = ccrypto.GenerateTmpKeyPair()
 	err := json.Unmarshal([]byte(data), act)
 	if err!=nil {fmt.Println(err)}
 	acct=append(acct, *act)
 
 	data = `{"name":"alice","balance":100}`
 	act = &Account{}
+	act.TmpK = ccrypto.GenerateTmpKeyPair()
 	err = json.Unmarshal([]byte(data), act)
 	if err!=nil {fmt.Println(err)}
 	acct=append(acct, *act)
 
 
-	data = `{"name":"alice_bob","balance":10,"ok":true,"sh":"xxx"}`
+	data = `{"name":"alice_bob","balance":10,"ok":true}`
 	act = &Account{}
 	err = json.Unmarshal([]byte(data), act)
 	act.Starttime = time.Now().UTC().UnixNano()/1000000
 	act.EndTime = act.Starttime+ 24*3600*1000
+	act.SecretHash = string(btcutil.Hash160([]byte("test message")))//Bob gen for CYB
+
+	//signature,_ := GetAcctFromName("bob").TmpK.Private.Sign(btcutil.Hash160([]byte("test message")))
+	//act.SigB = string(signature.Serialize()) //Bob gen for BTC
 	if err!=nil {fmt.Println(err)}
 	acct=append(acct, *act)
 
@@ -54,7 +58,7 @@ func Init() {
 }
 
 func hash(sig string) string{
-	return sig
+	return string(btcutil.Hash160([]byte(sig)))
 }
 
 func fromSpecialAcct2Normal(from Account,to Account)  {
@@ -62,7 +66,7 @@ func fromSpecialAcct2Normal(from Account,to Account)  {
 	from.Balance = 0
 	from.OK = false
 }
-func getAcctFromName(name string) Account {
+func GetAcctFromName(name string) Account {
 	for _, v := range acct {
 		if v.Name == name{
 			return v
@@ -70,12 +74,13 @@ func getAcctFromName(name string) Account {
 	}
 	return Account{}
 }
-func checkBobBTCSig() bool{
-	return true
+func checkBobBTCSig(bob Account) bool{
+	BTCChainBobsig := bob.SigB
+	return bob.SigB == BTCChainBobsig
 }
-func onReceiveHash(name string,sigs AcntWithSig){
-	ac := getAcctFromName(name)
-	ac.Sigs = sigs
+func OnReceiveHash(name string,sig string){
+	ac := GetAcctFromName(name)
+	ac.SigB = sig
 }
 func checkSig(v Account) bool{
 
@@ -83,12 +88,13 @@ func checkSig(v Account) bool{
 	// if Bob provide its sig and all nodes verified it both in BTC and CYB chain,then to Bob
 		bobName := strings.Split(v.Name,"_")[1]
 		//verify it in CYB
-		bob := getAcctFromName(bobName)
-		if hash(bob.Sigs.Mysig) != v.SecretHash{
+		bob := GetAcctFromName(bobName)
+		if hash(bob.SigB) != v.SecretHash{
+			fmt.Println("Bob.sig not OK")
 			return false
 		}
 		//verify it in BTC to guarentee Bob is not cheating
-		if checkBobBTCSig() == false{
+		if checkBobBTCSig(bob) == false{
 			return false
 		}
 		//	to Bob
@@ -97,14 +103,14 @@ func checkSig(v Account) bool{
 	}else{
 	//	to Alice
 		aliceName := strings.Split(v.Name,"_")[0]
-		fromSpecialAcct2Normal(v,getAcctFromName(aliceName))
+		fromSpecialAcct2Normal(v,GetAcctFromName(aliceName))
 
 	}
 	return true
 }
 
 func Run()  {
-	Init()
+
 	//for true {
 
 		for _, v := range acct{
@@ -113,6 +119,6 @@ func Run()  {
 			}
 		}
 
-		time.Sleep(1000000)
+	time.Sleep(time.Second)
 	//}
 }
