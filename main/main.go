@@ -1,6 +1,6 @@
 package main
 
-import "github.com/scottocs/swap_philosophy/src/node"
+import "github.com/scottocs/swap_philosophy/cyb"
 
 func initTmpSKForBob()  {
 
@@ -41,5 +41,5 @@ func main() {
 	sendCYBToBob()
 	sendBTCToAlice()
 	refundDeposit()
-	node.Run()
+	cyb.Run()
 }
