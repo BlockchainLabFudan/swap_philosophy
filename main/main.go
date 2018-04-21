@@ -1,6 +1,9 @@
 package main
 
-import "github.com/scottocs/swap_philosophy/cyb"
+import (
+	"github.com/scottocs/swap_philosophy/crypto"
+	"github.com/scottocs/swap_philosophy/cyb"
+)
 
 func initTmpSKForBob()  {
 
@@ -35,6 +38,9 @@ func refundDeposit()  {
 	
 }
 func main() {
+	crypto.GenerateTmpKeyPair()
+
+
 	initTmpSKForBob()
 	initTmpSKForAlice()
 	sendBTCDepositToAlice()
