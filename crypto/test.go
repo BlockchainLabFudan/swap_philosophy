@@ -8,6 +8,7 @@ import (
 	"crypto/rand"
 	"github.com/btcsuite/btcd/btcec"
 	"fmt"
+	"github.com/btcsuite/btcutil"
 )
 type PrivateKey btcec.PrivateKey
 func NewPrivateKey(curve elliptic.Curve) (*btcec.PrivateKey, error) {
@@ -28,6 +29,8 @@ func TestGenerateSharedSecret() {
 
 		return
 	}
+	signature,_ :=  privKey1.Sign(btcutil.Hash160([]byte("test message")))
+	fmt.Println("verified",signature.Verify(btcutil.Hash160([]byte("test message")), privKey1.PubKey()))
 
 	secret1 := btcec.GenerateSharedSecret(privKey1, privKey2.PubKey())
 	secret2 := btcec.GenerateSharedSecret(privKey2, privKey1.PubKey())
