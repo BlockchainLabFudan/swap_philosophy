@@ -28,9 +28,9 @@ func main() {
 	BtcAmount,_ := btcutil.NewAmount(100)
 	_, Bobcontract, BobcontractTx, _ := GOD.BobInitiate(BtcAmount)
 
-	BobSig,_ := GOD.BobTmpK.Private.Sign(btcutil.Hash160(Bobcontract))
+	BobSig,_ := cyb.GetAcctFromName("bob").TmpK.Private.Sign(btcutil.Hash160(Bobcontract))
 	BobSigByte := BobSig.Serialize()
-	BobSigString := string(BobSigByte)
+	//_ := string(BobSigByte) //BobSigString
 	BobSigHash := btcutil.Hash160(BobSigByte)
 
 	fmt.Printf("#####################AliceAuditTX()#############################\n\n")
@@ -42,7 +42,7 @@ func main() {
 	go cyb.Run()
 
 	time.Sleep(10*time.Second)
-	signature,_ :=  GOD.BobTmpK.Private.Sign(btcutil.Hash160([]byte("test message")))
+	signature,_ :=  cyb.GetAcctFromName("bob").TmpK.Private.Sign(BobSigHash)
 	cyb.OnReceiveHash("bob", string(signature.Serialize()))
 
 }

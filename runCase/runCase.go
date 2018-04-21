@@ -98,7 +98,7 @@ func (this *ExampleCase)InitTmpKForAliceAndBob(){
 	cyb.Init()
 }
 func (this *ExampleCase)BobInitiate(amount btcutil.Amount) (btcutil.Address,[]byte, *wire.MsgTx, *chainhash.Hash) {
-	cmd := btc.NewInitiateCmd(this.BobTmpK.Private.Serialize(),this.BobTmpK.Addr,cyb.GetAcctFromName("alice").TmpK.Addr,amount)
+	cmd := btc.NewInitiateCmd(cyb.GetAcctFromName("bob").TmpK.Private.Serialize(),cyb.GetAcctFromName("bob").TmpK.Addr,cyb.GetAcctFromName("alice").TmpK.Addr,amount)
 	return cmd.Initiate(nil)
 }
 func (this *ExampleCase)AliceAuditTX(BobContract []byte, BobContractTx *wire.MsgTx)  {
