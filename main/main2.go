@@ -4,12 +4,21 @@ import (
 	"github.com/scottocs/swap_philosophy/runCase"
 	"github.com/btcsuite/btcutil"
 	"fmt"
+	"github.com/scottocs/swap_philosophy/crypto"
+	"encoding/hex"
+	"os"
+	"github.com/scottocs/swap_philosophy/cyb"
+	"time"
 )
 
 func main() {
 	GOD := new(runCase.ExampleCase)
-	GOD.InitTmpSKForBob()
-	GOD.InitTmpSKForAlice()
+	GOD.GlobalAlice = crypto.Getprivatekey(os.Getenv("GOPATH")+"/src/github.com/scottocs/swap_philosophy/alice.txt")
+	GOD.GlobalBob = crypto.Getprivatekey(os.Getenv("GOPATH")+"/src/github.com/scottocs/swap_philosophy/bob.txt")
+	fmt.Println(hex.EncodeToString(GOD.GlobalAlice.Serialize()))
+	GOD.InitTmpKForAliceAndBob()
+	//GOD.InitTmpSKForBob()
+	//GOD.InitTmpSKForAlice()
 
 	GOD.ExchangePubkeys()
 
@@ -30,6 +39,10 @@ func main() {
 
 	//GOD.SendBTCToAlice()
 	//GOD.SendCYBToBob()
-	//go cyb.Run()
+	go cyb.Run()
+
+	time.Sleep(10*time.Second)
+	signature,_ :=  GOD.BobTmpK.Private.Sign(btcutil.Hash160([]byte("test message")))
+	cyb.OnReceiveHash("bob", string(signature.Serialize()))
 
 }
