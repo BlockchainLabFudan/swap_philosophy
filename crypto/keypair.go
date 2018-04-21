@@ -2,10 +2,8 @@ package crypto
 
 import (
 	"github.com/btcsuite/btcd/btcec"
-	"fmt"
 	"github.com/btcsuite/btcutil"
 	"github.com/btcsuite/btcd/chaincfg"
-	"encoding/json"
 	"encoding/hex"
 )
 
@@ -31,9 +29,9 @@ func GenerateTmpKeyPair() (*Keypair) {
 
 	NP.AddrStr = NP.addr.String()
 
-	jsonStr,_ := json.MarshalIndent(NP,"","	")
+	//jsonStr,_ := json.MarshalIndent(NP,"","	")
 
-	fmt.Printf("keyppair:: %v  \n", NP)
-	fmt.Printf("jsonStr:: %v  \n", jsonStr)
+	//fmt.Printf("keyppair:: %v  \n", NP)
+	//fmt.Printf("jsonStr:: %v  \n", jsonStr)
 	return NP
 }
