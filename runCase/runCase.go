@@ -6,12 +6,13 @@ import (
 	"github.com/scottocs/swap_philosophy/btc"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
+	"github.com/viacoin/viad/btcec"
 )
 
 func (this *ExampleCase)InitTmpSKForBob()  {
 	this.BobTmpK = ccrypto.GenerateTmpKeyPair()
-	b,_ := this.BobTmpK.ToJson()
-	this.BobTmpKStr = string(b)
+	//b,_ := this.BobTmpK.ToJson()
+	//this.BobTmpKStr = string(b)
 }
 func (this *ExampleCase)GetPKOfBob() string {
 	return this.BobTmpK.PubStr
@@ -22,8 +23,8 @@ func (this *ExampleCase)GetSigOfBob(){
 
 func (this *ExampleCase)InitTmpSKForAlice()  {
 	this.AliceTmpK = ccrypto.GenerateTmpKeyPair()
-	b,_ := this.AliceTmpK.ToJson()
-	this.AliceTmpKStr = string(b)
+	//b,_ := this.AliceTmpK.ToJson()
+	//this.AliceTmpKStr = string(b)
 }
 func (this *ExampleCase)GetPKOfAlice() string {
 	return this.AliceTmpK.PubStr
@@ -62,7 +63,10 @@ type ExampleCase struct{
 	txAmountCYB int
 	txAmountBTC int
 	AliceTmpK *ccrypto.Keypair
-	AliceTmpKStr string
+	//AliceTmpKStr string
 	BobTmpK *ccrypto.Keypair
-	BobTmpKStr string
+	//BobTmpKStr string
+	GlobalAlice *btcec.PrivateKey
+	GlobalBob  *btcec.PrivateKey
+
 }
