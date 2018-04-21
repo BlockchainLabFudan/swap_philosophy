@@ -6,7 +6,7 @@ import (
 	"github.com/scottocs/swap_philosophy/btc"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
-	"github.com/viacoin/viad/btcec"
+	"github.com/btcsuite/btcd/btcec"
 )
 
 func (this *ExampleCase)InitTmpSKForBob()  {
