@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script
+            src="http://code.jquery.com/jquery-3.0.0.min.js"
+            integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0="
+            crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <!-- 生产环境版本，优化了尺寸和速度 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>ATOMIC SWAP BETWEEN BTC & CYB</title>
+    <style>
+    .margin-5px{
+      margin-top: 5px;
+    }
+    </style>
+</head>
+<body>
+  <div class="container-fluid" id="MainPage">
+      <div class="row">
+          <div class="col-xs-12 text-center"><h2>ATOMIC SWAP BETWEEN BTC & CYB</h2></div>
+      </div>
+      <div class="row">
+          <div class="col-xs-4 well">
+              <div class="col-xs-12 text-center"><h3>Bob</h3></div>
+
+              <div class="col-xs-6 text-center">
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-info btn-block btn-md" @click="requestDeal('bob')">request deal</buttton></div>
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-info btn-block btn-md" @click="generateKey('bob')">generate key pair</buttton></div>
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-info btn-block btn-md" @click="exchageInfo('bob')">exchange info</buttton></div>
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-info btn-block btn-md" @click="initiate('bob')">initiate</buttton></div>
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-info btn-block btn-md" @click="redeem('bob')">redeem</buttton></div>
+              </div>
+
+              <div class="col-xs-6 text-center">
+              	 <div class="col-xs-6 text-center margin-5px">secret: </div><div class="col-xs-6 text-center margin-5px">{{bob.secret}}</div>
+              	 <div class="col-xs-6 text-center margin-5px">pubkey: </div><div class="col-xs-6 text-center margin-5px">{{bob.pubkey}}</div>
+              	 <div class="col-xs-6 text-center margin-5px">address: </div><div class="col-xs-6 text-center margin-5px">{{bob.address}}</div>
+              </div>
+
+
+          </div>
+          <div class="col-xs-4 well">
+              <div class="col-xs-12 text-center"><h3>TRANSFER PROTOCOL</h3></div>
+              <div class="col-xs-12 text-center" v-for="(s, i) in trace">trace...</div>
+          </div>
+          <div class="col-xs-4 well">
+              <div class="col-xs-12 text-center"><h3>Alice</h3></div>
+              <div class="col-xs-6 text-center">
+              </div>
+
+              <div class="col-xs-6 text-center">
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-warning btn-block btn-md" @click="agreeDeal('alice')">agree deal</buttton></div>
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-warning btn-block btn-md" @click="generateKey('alice')">generate key pair</buttton></div>
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-warning btn-block btn-md" @click="exchageInfo('alice')">exchange info</buttton></div>
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-warning btn-block btn-md" @click="audit('alice')">audit</buttton></div>
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-warning btn-block btn-md" @click="participate('alice')">participate</buttton></div>
+                  <div class="col-xs-12 text-center margin-5px"><button class="btn btn-warning btn-block btn-md" @click="redeem('alice')">redeem</buttton></div>
+              </div>
+          </div>
+      </div>
+  </div>
+</body>
+<!-- vue -->
+<script>
+var app = new Vue({
+	el: '#MainPage',
+	data: function(){
+		return {
+		      bob:{
+		      		secret:"",
+				pubkey:"",
+				address:"",
+		      },
+		      alice:{
+
+		      },
+		      trace:{},
+				}
+			},
+	methods: {
+		requestDeal: function(name){
+			console.log(name)
+			var _this = this;
+			$.post("requestDeal",{},function(data,status){
+				console.log("data");
+				console.log(data)
+			});
+		},
+		generateKey: function(name){
+			console.log(name)
+			var _this = this;
+			$.post("generateKey",{name:name},function(data,status){
+				console.log("data");
+				console.log(data)
+				_this[name].secret = data.secret
+				_this[name].pubkey = data.pubkey
+				_this[name].address = data.address
+			});
+		},
+		exchageInfo: function(name){},
+		initiate: function(name){},
+		redeem: function(name){},
+
+
+
+		// agreeDeal: function(name){},
+		// generateKey: function(name){},
+		// exchageInfo: function(name){},
+		audit: function(name){},
+		participate: function(name){},
+
+		// redeem: function(name){},
+	},
+	computed: {
+	},
+	created(){
+		// this.fetch_person_info();
+		// this.fetch_history_record();
+	}
+});
+</script>
+</html>
