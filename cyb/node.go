@@ -85,7 +85,6 @@ func OnReceiveHash(name string,sig string){
 	for _, v := range acct {
 		if v.Name == name{
 			v.SigB = sig
-			fmt.Println("bob broadcasts sigB'")
 			break
 		}
 	}
@@ -99,11 +98,12 @@ func checkSig(v *Account) bool{
 		bob := GetAcctFromName(bobName)
 		//fmt.Println(bob.SigB,bob.SecretHash)
 		if hash(bob.SigB) != bob.SecretHash{
-			fmt.Println("Bob.sig not OK")
+			fmt.Println("bob.SigB != bob.SecretHash")
 			return false
 		}
 		//verify it in BTC to guarentee Bob is not cheating
 		if checkBobBTCSig(bob) == false{
+			fmt.Println("bob cheat with different sig in cyb and btc net")
 			return false
 		}
 		fmt.Println("redeem ok,bob from ",bob.Balance,"||", v.Name," from",v.Balance)
@@ -115,7 +115,7 @@ func checkSig(v *Account) bool{
 	//	to Alice
 		aliceName := strings.Split(v.Name,"_")[0]
 		fromSpecialAcct2Normal(v,GetAcctFromName(aliceName))
-
+		fmt.Println("refund to alice")
 	}
 	return true
 }

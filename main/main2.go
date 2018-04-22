@@ -38,10 +38,11 @@ func main() {
 	fmt.Printf("#####################AliceAuditTX()#############################\n\n")
 	GOD.AliceAuditTX(Bobcontract, BobcontractTx)
 
+	// Below will be the code of a node in CYB chain
 	fmt.Printf("##################### clock of CYB Chain  is working()#############################\n\n")
 	go cyb.Run()
 
-	fmt.Printf("#####################Get Bob's secret, namely h(SigB)#############################\n\n")
+	fmt.Printf("#####################Get Bob's secret, namely h(SigB),it will be included in Alice's TX######################\n\n")
 	bob := cyb.GetAcctFromName("bob")
 	bob.SecretHash = BobSigHash
 	//signature,_ :=  cyb.GetAcctFromName("bob").TmpK.Private.Sign([]byte(BobSigString))
