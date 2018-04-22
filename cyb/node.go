@@ -106,10 +106,10 @@ func checkSig(v *Account) bool{
 			fmt.Println("bob cheat with different sig in cyb and btc net")
 			return false
 		}
-		fmt.Println("redeem ok,bob from ",bob.Balance,"||", v.Name," from",v.Balance)
+		fmt.Println("Bob redeem ok,bob from ",bob.Balance,"||", v.Name," from",v.Balance)
 		//	to Bob
 		fromSpecialAcct2Normal(v,bob)
-		fmt.Println("redeem ok,bob to ",bob.Balance,"||",v.Name," to",v.Balance)
+		fmt.Println("Bob redeem ok,bob to ",bob.Balance,"||",v.Name," to",v.Balance)
 
 	}else{
 	//	to Alice

@@ -4,21 +4,17 @@ import (
 	"github.com/scottocs/swap_philosophy/runCase"
 	"github.com/btcsuite/btcutil"
 	"fmt"
-	"github.com/scottocs/swap_philosophy/crypto"
+
 	"encoding/hex"
-	"os"
+
 	"github.com/scottocs/swap_philosophy/cyb"
 	"time"
 )
 
 func main() {
 	GOD := new(runCase.ExampleCase)
-	GOD.GlobalAlice = crypto.Getprivatekey(os.Getenv("GOPATH")+"/src/github.com/scottocs/swap_philosophy/alice.txt")
-	GOD.GlobalBob = crypto.Getprivatekey(os.Getenv("GOPATH")+"/src/github.com/scottocs/swap_philosophy/bob.txt")
-	fmt.Println(hex.EncodeToString(GOD.GlobalAlice.Serialize()))
+
 	GOD.InitTmpKForAliceAndBob()
-	//GOD.InitTmpSKForBob()
-	//GOD.InitTmpSKForAlice()
 
 	GOD.ExchangePubkeys()
 
@@ -41,7 +37,7 @@ func main() {
 	// Below will be the code of a node in CYB chain
 	fmt.Printf("##################### clock of CYB Chain  is working()#############################\n\n")
 	go cyb.Run()
-
+	time.Sleep(3*time.Second)
 	fmt.Printf("#####################Get Bob's secret, namely h(SigB),it will be included in Alice's TX######################\n\n")
 	bob := cyb.GetAcctFromName("bob")
 	bob.SecretHash = BobSigHash
@@ -49,5 +45,5 @@ func main() {
 	fmt.Printf("#####################Bob broadcast its sigB to BTC and CYB #############################\n\n")
 	go cyb.OnReceiveHash("bob", BobSigString)
 
-	time.Sleep(10*time.Second)
+	time.Sleep(5*time.Second)
 }

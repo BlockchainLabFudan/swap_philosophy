@@ -5,7 +5,7 @@ import (
 	ccrypto "github.com/scottocs/swap_philosophy/crypto"
 	"github.com/scottocs/swap_philosophy/btc"
 	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcd/btcec"
+
 	"encoding/json"
 	"fmt"
 	"time"
@@ -115,7 +115,5 @@ type ExampleCase struct{
 	//AliceTmpKStr string
 	BobTmpK *ccrypto.Keypair
 	//BobTmpKStr string
-	GlobalAlice *btcec.PrivateKey
-	GlobalBob  *btcec.PrivateKey
 
 }
